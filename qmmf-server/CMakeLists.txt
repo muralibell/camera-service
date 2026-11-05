@@ -13,9 +13,9 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DAEC_WAIT_TIMEOUT=500000000")
 set(CAM_SERVER_SYSTEMD_DIR lib/systemd/system)
-set(CAM_SERVER_USER "root" CACHE STRING "User for camera server service")
-set(CAM_SERVER_GROUP "video" CACHE STRING "Group for camera server service")
-set(CAM_SERVER_SUPP_GROUP "" CACHE STRING "Supplementary groups")
+set(CAM_SERVER_SYSUSERS_DIR lib/sysusers.d CACHE PATH "sysusers.d directory, relative to CMAKE_INSTALL_PREFIX")
+set(CAM_SERVER_USER "qticamserver" CACHE STRING "User for camera server service")
+set(CAM_SERVER_GROUP "video" CACHE STRING "Primary group for camera server service")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/service/qti-cam-server-base.service.in
@@ -55,6 +55,10 @@ install(PROGRAMS
 install(FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/service/99-camera.rules
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/udev/rules.d/)
+
+install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/service/qticamserver.conf
+        DESTINATION ${CAM_SERVER_SYSUSERS_DIR})
 
 if(HAVE_ANDROID_UTILS)
 target_link_libraries(qti-cam-server log cutils utils binder)
